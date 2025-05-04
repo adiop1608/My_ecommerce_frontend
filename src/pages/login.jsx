@@ -3,19 +3,17 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // import { isAuthenticated } from "../src/utils/auth.utils";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 function Login() {
   const navigate = useNavigate();
-  // useEffect(()=>{
-  //   if(isAuthenticated()){
-  //     navigate('/dashboard');
-  //   }
-  // })
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleEmailFocus = () => {
     setIsEmailFocused(true);
@@ -50,10 +48,7 @@ function Login() {
         { withCredentials: true } 
       )
       const token = response.data.token;
-      localStorage.setItem("authToken", token);
-      if (response.status === 200) {
-        alert("Login Successful!");
-      }
+      login(token)
       navigate("/dashboard");
     } catch (error) {
       console.error("Login Error:", error);

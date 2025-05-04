@@ -105,6 +105,7 @@ const UserManagement = () => {
             onChange={(e) => setSortField(e.target.value)}
             className="border-1 border-gray-400 rounded-lg px-3 py-1 text-gray-700 lato-semibold"
           >
+            <option value="">All</option>
             <option value="firstName">First Name</option>
             <option value="lastName">Last Name</option>
             <option value="email">Email</option>
