@@ -1,0 +1,31 @@
+/* Hide scrollbar while keeping scrolling */
+html, body {
+    overflow: auto;
+    height: 100%;
+    margin: 0;
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  /* Hide scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+  html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none;
+  }
+  
+  input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+  overflow: auto;
+  height: 100%;
+  margin: 0;
+  scrollbar-width: none; 
+}
+
+.custom-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
