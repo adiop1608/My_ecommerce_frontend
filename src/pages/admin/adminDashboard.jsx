@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import OverviewCard from "../../components/overviewcards";
 import SalesGraph from "./salesGraph";
+import { Link } from "react-router-dom";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({
@@ -61,8 +62,20 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-4 w-full">
-      <div className="merriweather-regular">
-        <h1 className="text-2xl font-bold mb-4  ">Dashboard Overview</h1>
+      <div className="merriweather-regular flex items-start justify-between">
+        <h1 className="text-2xl font-bold mb-8 mt-4 poppins-semibold  ">Admin Dashboard </h1>
+        <Link to="/dashboard">
+        <div className="flex flex-row items-center cursor-pointer">
+          <img
+            className=" size-[50px] rounded-full flex "
+            src="../src/assets/logo.png "
+            alt=""
+          />
+          <p className="ml-4 hover:text-blue-500 hover:underline hover:underline-offset-8 cursor-pointer ">
+            ShopSphere
+          </p>
+        </div>
+            </Link>
       </div>
 
       {/* Overview Cards */}
@@ -73,14 +86,14 @@ const AdminDashboard = () => {
       </div>
 
       {/* Sales Graph (Placeholder) */}
-      <div className=" sm:flex-row flex flex-col justify-between ">
+      <div className=" lg:flex ">
         <div className=" w-full bg-white p-6 mb-8 rounded shadow merriweather-regular">
           <h2 className="text-xl font-semibold mb-4 ">Sales Graph</h2>
           <div className="  h-48 bg-gray-200 flex items-center justify-center">
             <SalesGraph />
           </div>
         </div>
-         <div className="sm:w-1/3 h-71 bg-white p-6 rounded shadow poppins-regular">
+         <div className=" lg:w-3/5 h-71  bg-white p-6 rounded shadow poppins-regular">
           <h2 className="text-xl font-semibold mb-2">Top-Selling Products</h2>
           <ul className="list-disc ml-5 space-y-1">
             {topProducts.length > 0 ? (

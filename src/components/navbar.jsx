@@ -15,11 +15,12 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
-function Navbar() {
+import debounce from "lodash/debounce";
+function Navbar({onSearch}) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSearchFocus, setIsSearchFocus] = useState(false);
   const [user, setUser] = useState(null);
+  const [searchQuery,setSearchQuery] = useState("");
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -55,6 +56,16 @@ function Navbar() {
   const handleSearchBlur = () => {
     setIsSearchFocus(false);
   };
+  const debouncedSearch = debounce((query) => {
+    if (onSearch) onSearch(query);
+  }, 500);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    debouncedSearch(value);
+  };
+
   return (
     <nav className="div1 bg-white text-black min-w-full h-28 flex flex-row items-center justify-between p-7 text-nowrap shadow-lg style-none relative ">
       <Link to="/dashboard">
@@ -83,6 +94,8 @@ function Navbar() {
       <input
         type="text"
         placeholder="search"
+        value={searchQuery}
+        onChange={handleSearchChange}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
         className={`hidden md:flex bg-white text-black rounded-md w-[600px] h-9 pl-2 transition-all duration-300 border border-amber-100 ${
