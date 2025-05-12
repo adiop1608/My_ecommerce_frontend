@@ -133,13 +133,15 @@ function Navbar({onSearch}) {
             Cart
           </li>
         </Link>
+        <Link to='/myorder'>
         <li className="mr-10 ml-10  hover:text-blue-500  hover:underline hover:underline-offset-8 cursor-pointer">
           <FontAwesomeIcon
             icon={faBox}
             className=" inline-block mt-[3.5px] mr-3"
-          />
+            />
           My Orders
         </li>
+            </Link>
         <Link to="/admin">
           {user && user.role === "Admin" && (
             <li className="mr-10 ml-10  hover:text-blue-500  hover:underline hover:underline-offset-8 cursor-pointer">
@@ -172,20 +174,22 @@ function Navbar({onSearch}) {
         </button>
         {dropdownOpen && (
           <ul className="absolute right-0 mt-2 w-48 bg-black text-white border border-gray-700 rounded-lg shadow-lg p-2">
-            <li className="px-4 py-2 hover:text-blue-400 cursor-pointer flex items-center ">
+            {/* <li className="px-4 py-2 hover:text-blue-400 cursor-pointer flex items-center ">
               <FontAwesomeIcon icon={faUser} className="mr-3" /> Profile
             </li>
             <li className="px-4 py-2 hover:text-blue-400 cursor-pointer flex items-center">
               <FontAwesomeIcon icon={faHeart} className="mr-3" /> Wishlist
-            </li>
+            </li> */}
             <Link to="/cart">
               <li className="px-4 py-2 hover:text-blue-400  cursor-pointer flex items-center">
                 <FontAwesomeIcon icon={faCartShopping} className="mr-3" /> Cart
               </li>
             </Link>
+            <Link to='/myorder'>
             <li className="px-4 py-2 hover:text-blue-400 cursor-pointer flex items-center">
               <FontAwesomeIcon icon={faBox} className="mr-3" /> My Orders
             </li>
+            </Link>
             <Link to="/admin">
               {user && user.role === "Admin" && (
                 <li className="px-4 py-2 hover:text-blue-400 cursor-pointer flex items-center">

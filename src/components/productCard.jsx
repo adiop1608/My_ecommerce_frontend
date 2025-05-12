@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
   ).toFixed(2);
 
   const token = localStorage.getItem('authToken')
-  console.log(token)
+
 const addToCart = async (product) => {
   try {
 
@@ -20,15 +20,17 @@ const addToCart = async (product) => {
       {
         productId: product._id,
         name: product.name,
+        description: product.description,
         price: product.price,
         cardImage: product.cardImage,
-        discount:product.discount // Adjust this according to your model
+        discount:product.discount 
       },{
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         }
       }
     )
+    console.log(res); 
     alert('Added to cart!')
   } catch (error) {
     console.error('Add to cart error:', error)
