@@ -2,7 +2,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Myorders() {
@@ -43,19 +43,21 @@ function Myorders() {
             src={"../src/assets/logo.png"}
             alt="logo"
           />
+          <Link to='/dashboard'>
           <p className="ml-2 hover:text-blue-500 hover:underline cursor-pointer">
             ShopSphere
           </p>
+          </Link>
         </div>
       </div>
 
-      <div className="flex ml-4 items-center justify-between mb-8">
-        <div className="flex gap-x-4">
+      <div className="flex ml-4 items-center justify-between mb-8 ">
+        <div className="flex gap-x-4 ">
           {["All", "Processing", "Shipped","Delivered", "Cancelled"].map((status) => (
             <button
               key={status}
               onClick={()=>setSelectedStatus(status)}
-              className="rounded-3xl border cursor-pointer text-gray-900 border-gray-400 hover:text-red-600 hover:border-red-500 px-4 py-1"
+              className="rounded-3xl border cursor-pointer text-gray-900 border-gray-400 hover:text-red-600 hover:border-red-500 px-4 py-1 "
             >
               {status}
             </button>
@@ -72,9 +74,12 @@ function Myorders() {
                 filteredOrders.map((order, index) => (
           <div
             key={index}
-            className="border rounded-xl ml-4 p-4 mb-4 border-gray-400 poppins-regular"
+            className="border rounded-xl ml-4 p-4 mb-4 border-gray-200 poppins-regular"
+            style={{
+  boxShadow: "0 0 20px rgba(0, 0, 0, 0.2)"
+}}
           >
-            <div className="flex gap-2 items-center mb-2">
+            <div className="flex gap-2 items-center mb-2 ">
               <span
                 className={`px-2 py-1 rounded-full text-xs ${
                   order.orderStatus === "Delivered"
@@ -166,11 +171,13 @@ function Myorders() {
             ))}
             <div className="text-sm text-gray-600 mt-2">
               <p className="text-lg">
-                <strong>Payment :</strong> {order.paymentMethod}
+                <span className="text-indigo-500 font-semibold">Payment :</span> {order.paymentMethod}
               </p>
-              <p className="text-xl">
-                <strong>Total:</strong> $
-                {(order.subtotal - (order.totalDiscount || 0)).toFixed(2)}
+              <p className="text-xl flex">
+                <p className="text-indigo-500 font-semibold">Total :  </p> 
+               <span className="ml-1">
+                  ${(order.subtotal - (order.totalDiscount || 0)).toFixed(2)}
+                </span>
               </p>
             </div>
           </div>

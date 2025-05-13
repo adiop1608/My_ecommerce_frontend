@@ -10,7 +10,6 @@ import Admin from './pages/admin/admin'
 import { AuthProvider } from "./context/AuthContext"
 import ProtectedRoute from "./components/ProtectedRoute"
 import PublicRoute from "./components/PublicRoute"
-import ProfilePage from "./pages/demo"
 import Myorders from "./pages/myOrders"
 
 
@@ -87,12 +86,13 @@ function App() {
             }
           />
           <Route
-          path="/demo"
-          element={<ProfilePage/>}>
-          </Route>
-          <Route
           path="/myorder"
-          element={<Myorders/>}>
+          element={
+              <ProtectedRoute>
+                <Myorders/>
+              </ProtectedRoute>
+            }>
+            
           </Route>
         </Routes>
       </BrowserRouter>
