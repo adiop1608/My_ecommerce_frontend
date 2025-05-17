@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBagShopping, faStar } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom"; // 👈 Add this import
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const ProductCard = ({ product }) => {
@@ -69,14 +69,19 @@ const addToCart = async (product) => {
         <p className="flex justify-evenly mt-2 text-gray-400 text-sm">
           {product.description}
         </p>
-        <div className="mt-2">
-          <span className="text-red-500 text-sm">
+        <div className="mt-2 flex justify-between">
+          <div className="flex ">
+
+          <span className="text-red-500 text-xs">
             Rating : {product.rating}
-            <FontAwesomeIcon icon={faStar} className="hidden ml-1 mr-4" />
+            <FontAwesomeIcon icon={faStar} className="hidden  " />
           </span>
-          <span className="text-red-500 text-sm">
-            Discount : {product.discount}%
+          </div>
+          <div className="flex">
+          <span className="text-green-500 text-sm text-nowrap">
+            <a>Discount :</a> ({product.discount}%)
           </span>
+          </div>
         </div>
         <div className="flex justify-evenly items-center mt-3 mb-1">
           <div>

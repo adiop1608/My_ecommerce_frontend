@@ -76,7 +76,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* fallback route */}
           <Route
             path="*"
             element={
