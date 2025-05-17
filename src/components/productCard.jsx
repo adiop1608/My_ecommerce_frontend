@@ -1,16 +1,32 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBagShopping, faStar } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom"; // 👈 Add this import
+import { Link, useNavigate } from "react-router-dom"; // 👈 Add this import
 import axios from 'axios'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   const discountedPrice = (
     product.price -
     (product.price * product.discount) / 100
   ).toFixed(2);
 
   const token = localStorage.getItem('authToken')
+    const handleBuyNow = () => {
+    navigate("/checkout", {
+      state: {
+        buyNowProduct: {
+        productId: product._id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        cardImage: product.cardImage,
+        discount:product.discount 
+        },
+      },
+    });
+  };
+
 
 const addToCart = async (product) => {
   try {
@@ -74,7 +90,7 @@ const addToCart = async (product) => {
         </div>
     </Link>
         <div className="flex justify-between mt-3 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button className="cursor-pointer bg-white text-black px-4 py-2 shadow-sm shadow-red-500 rounded-lg hover:bg-red-600 hover:text-white">
+          <button className="cursor-pointer bg-white text-black px-4 py-2 shadow-sm shadow-red-500 rounded-lg hover:bg-red-600 hover:text-white" onClick={handleBuyNow}>
             Buy Now
           </button>
           <button  onClick={() => addToCart(product)} className="bg-white text-black px-4 py-2 rounded-lg shadow-sm shadow-blue-400 text-sm hover:bg-blue-600 hover:text-white transition">

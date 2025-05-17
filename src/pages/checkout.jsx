@@ -2,18 +2,18 @@
 
 import axios from "axios";
 import { useState, useEffect } from "react";
-
-("use client");
-
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function Checkout() {
   const [AddressIndex, setAddressIndex] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
-
   const [addresses, setAddresses] = useState([]);
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("authToken");
+  const location = useLocation();
+  const buyNowProduct = location.state?.buyNowProduct;
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -23,8 +23,7 @@ function Checkout() {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        setAddresses(res.data.addresses); // adjust key based on your API
+        setAddresses(res.data.addresses);
       } catch (err) {
         console.error("Error fetching addresses:", err);
       }
@@ -32,6 +31,88 @@ function Checkout() {
 
     fetchAddresses();
   }, []);
+
+  useEffect(() => {
+    if (buyNowProduct) {
+      const discounted = (
+        buyNowProduct.price -
+        (buyNowProduct.price * buyNowProduct.discount) / 100
+      ).toFixed(2);
+      const discountValue = buyNowProduct.price - discounted;
+
+      setCart({
+        products: [
+          {
+            productId: buyNowProduct.productId,
+            name: buyNowProduct.name,
+            price: buyNowProduct.price,
+            discount: buyNowProduct.discount,
+            quantity: 1,
+            cardImage: buyNowProduct.cardImage,
+          },
+        ],
+        subtotal: parseFloat(discounted),
+        totalDiscount: parseFloat(discountValue),
+      });
+      setLoading(false);
+    } else {
+      fetchCart();
+    }
+  }, []);
+
+  const fetchCart = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/cart`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCart(res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to fetch cart", err);
+      setLoading(false);
+    }
+  };
+
+  const handleQuantityChange = buyNowProduct
+    ? () => {}
+    : async (productId, quantity) => {
+        try {
+          const res = await axios.put(
+            `${backendUrl}/cart/update-quantity`,
+            { productId, quantity },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setCart(res.data);
+        } catch (err) {
+          console.error("Quantity update failed", err);
+        }
+      };
+
+  const handleRemoveProduct = buyNowProduct
+    ? () => {}
+    : async (productId) => {
+        try {
+          const res = await axios.put(
+            `${backendUrl}/cart/remove-product`,
+            { productId },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setCart(res.data);
+        } catch (err) {
+          console.error("Failed to remove product", err);
+        }
+      };
+
   const handlePlaceOrder = async () => {
     if (AddressIndex === null) {
       alert("Please select an address");
@@ -47,14 +128,13 @@ function Checkout() {
     const orderData = {
       products: cart.products,
       address: selectedAddress,
-      paymentMethod: paymentMethod,
+      paymentMethod,
       subtotal: cart.subtotal,
       totalDiscount: cart.totalDiscount,
     };
 
     try {
       const response = await fetch(`${backendUrl}/order`, {
-        // Adjust API route if needed
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +147,7 @@ function Checkout() {
         alert("Order placed successfully!");
       } else {
         const text = await response.text();
-        console.error('Error Message:',text);
+        console.error("Order error:", text);
       }
     } catch (error) {
       console.error(error);
@@ -79,8 +159,8 @@ function Checkout() {
     e.preventDefault();
     const form = e.target;
     const newAddress = {
-      firstName: `${form["firstName"].value}`,
-      lastName: `${form["lastName"].value}`,
+      firstName: form["firstName"].value,
+      lastName: form["lastName"].value,
       street: form["street"].value,
       city: form["city"].value,
       pinCode: form["pinCode"].value,
@@ -100,76 +180,12 @@ function Checkout() {
         }
       );
       setAddresses(res.data.addresses);
-      console.log("Address added successfully:", res.data);
-      // Optional: refresh address list or give success feedback
     } catch (err) {
       console.error("Error adding address:", err.response?.data || err.message);
     }
   };
-  const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  const fetchCart = async () => {
-    const token = localStorage.getItem("authToken");
-
-    try {
-      const res = await axios.get(`${backendUrl}/cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("Fetched Cart", res.data);
-      setCart(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Failed to fetch cart", err);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const handleQuantityChange = async (productId, quantity) => {
-    const token = localStorage.getItem("authToken");
-
-    try {
-      const res = await axios.put(
-        `${backendUrl}/cart/update-quantity`,
-        { productId, quantity },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCart(res.data);
-    } catch (err) {
-      console.error("Quantity update failed", err);
-    }
-  };
-
-  const handleRemoveProduct = async (productId) => {
-    const token = localStorage.getItem("authToken");
-
-    try {
-      const res = await axios.put(
-        `${backendUrl}/cart/remove-product`,
-        { productId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCart(res.data);
-    } catch (err) {
-      console.error("Failed to remove product", err);
-    }
-  };
-
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading || !cart) return <div className="p-8">Loading...</div>;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 merriweather-regular scroll-smooth">
@@ -191,7 +207,7 @@ function Checkout() {
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-3">
                     <label
-                      for="firstName"
+                      htmlFor="firstName"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       First name
@@ -209,7 +225,7 @@ function Checkout() {
 
                   <div className="sm:col-span-3">
                     <label
-                      for="lastName"
+                      htmlFor="lastName"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       Last name
@@ -226,7 +242,7 @@ function Checkout() {
 
                   <div className="sm:col-span-4">
                     <label
-                      for="phoneNumber"
+                      htmlFor="phoneNumber"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       Contact Number
@@ -243,7 +259,7 @@ function Checkout() {
 
                   <div className="sm:col-span-3">
                     <label
-                      for="country"
+                      htmlFor="country"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       Country
@@ -267,9 +283,9 @@ function Checkout() {
                         data-slot="icon"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         />
                       </svg>
                     </div>
@@ -277,7 +293,7 @@ function Checkout() {
 
                   <div className="col-span-full">
                     <label
-                      for="street"
+                      htmlFor="street"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       Street address
@@ -294,7 +310,7 @@ function Checkout() {
 
                   <div className="sm:col-span-2 sm:col-start-1">
                     <label
-                      for="city"
+                      htmlFor="city"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       City
@@ -304,7 +320,7 @@ function Checkout() {
                         type="text"
                         name="city"
                         id="city"
-                        autocomplete="address-level2"
+                        autoComplete="address-level2"
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                       ></input>
                     </div>
@@ -312,7 +328,7 @@ function Checkout() {
 
                   <div className="sm:col-span-2">
                     <label
-                      for="state"
+                      htmlFor="state"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       State
@@ -330,7 +346,7 @@ function Checkout() {
 
                   <div className="sm:col-span-2">
                     <label
-                      for="pinCode"
+                      htmlFor="pinCode"
                       className="block text-sm/6 font-medium text-gray-900"
                     >
                       Pincode
@@ -484,24 +500,24 @@ function Checkout() {
                         <div className="ml-4 flex flex-1 flex-col">
                           <div className="flex justify-between text-base font-medium text-gray-900">
                             <h3>{product.name}</h3>
-                            <p className="ml-4 line-through text-gray-500">
-                              ${product.price}
+                            <p className="ml-4">
+                              $
+                              {(
+                                product.price -
+                                (product.price * product.discount) / 100
+                              ).toFixed(2)}
                             </p>
                           </div>
                           <div className="flex justify-end font-medium text-gray-600">
-                            <p className="ml-4">
-                              $
-                              {product.price -
-                                (
-                                  (product.price * product.discount) /
-                                  100
-                                ).toFixed(2)}
+                            <p className="ml-4 line-through text-gray-500">
+                              ${product.price}
                             </p>
                           </div>
                           <p className="mt-1 text-sm text-gray-500">Qty</p>
                           <div className="flex flex-1 items-end justify-between text-sm">
                             <select
                               value={product.quantity}
+                              disabled={!!buyNowProduct}
                               onChange={(e) =>
                                 handleQuantityChange(
                                   product.productId,
@@ -517,14 +533,16 @@ function Checkout() {
                               ))}
                             </select>
 
-                            <button
-                              onClick={() =>
-                                handleRemoveProduct(product.productId)
-                              }
-                              className="font-medium text-red-600 hover:text-red-500"
-                            >
-                              Remove
-                            </button>
+                            {!buyNowProduct && (
+                              <button
+                                onClick={() =>
+                                  handleRemoveProduct(product.productId)
+                                }
+                                className="font-medium text-red-600 hover:text-red-500"
+                              >
+                                Remove
+                              </button>
+                            )}
                           </div>
                         </div>
                       </li>
@@ -540,12 +558,13 @@ function Checkout() {
                 </div>
                 <div className="flex justify-between text-sm text-gray-700">
                   <p>Total Discount</p>
-                  <p>${cart.totalDiscount ? cart.totalDiscount.toFixed(2) : '0.00'}</p>
-
+                  <p>
+                    $
+                    {cart.totalDiscount
+                      ? cart.totalDiscount.toFixed(2)
+                      : "0.00"}
+                  </p>
                 </div>
-                <p className="mt-0.5 text-sm text-gray-500">
-                  Shipping and taxes
-                </p>
 
                 <div className="mt-6 flex items-center justify-center">
                   <button
