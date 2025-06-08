@@ -40,8 +40,8 @@ function Dashboard() {
       const res = await axios.get(`${backendUrl}/products/search`, {
         params: { q: query },
       });
-      setFilteredProducts(res.data);
       setIsPaginated(false);
+      setFilteredProducts(res.data);
     } catch (err) {
       console.error("Search failed", err);
     }
@@ -63,6 +63,11 @@ const handleResetFilters = () => {
   setCurrentPage(1);               
   fetchPaginatedProducts(1);       
 };
+// const handleFilteredProducts = () => {
+//   setIsPaginated(false);            
+//   setFilteredProducts()      
+// };
+
 
   return (
     <div className="m-0 p-0">

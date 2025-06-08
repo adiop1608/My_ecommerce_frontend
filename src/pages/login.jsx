@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import { isAuthenticated } from "../src/utils/auth.utils";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
@@ -38,8 +37,7 @@ function Login() {
     if (!backendUrl) {
       alert("Backend URL is missing!");
       return;
-    }
-
+    } 
     try {
       setLoading(true);
       const response = await axios.post(

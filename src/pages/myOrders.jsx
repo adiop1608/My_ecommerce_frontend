@@ -141,7 +141,7 @@ function Myorders() {
                       <p>Qty: {product.quantity}</p>
                     </div>
                     <div className="flex gap-2">
-                      <span className="flex gap-2">
+                      <span className="flex gap-2 text-blue-700">
                         Base Price:{" "}
                         <p className="line-through text-red-500">${product.price} </p>
                       </span>
@@ -152,10 +152,11 @@ function Myorders() {
                       )}
                     </div>
                     <div>
-                                            <p className="flex" >
+                                            <p className="flex text-blue-700" >
                         {" "}
-                        Price: $
+                        Price: 
                         <p className="text-red-600">
+                        $
 
                         {(
                           product.price -

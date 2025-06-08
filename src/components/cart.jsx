@@ -106,7 +106,7 @@ export default function Cart() {
                     </div>
                     <div className="flex justify-end font-medium text-gray-600">
                       
-                      <p className="ml-4">${product.price -(( product.price * product.discount)/100).toFixed(2)}</p>
+                      <p className="ml-4">${(product.price -(( product.price * product.discount)/100)).toFixed(2)}</p>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">Qty</p>
                     <div className="flex flex-1 items-end justify-between text-sm">

@@ -13,6 +13,7 @@ function SignUp() {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -31,6 +32,7 @@ function SignUp() {
         password: formData.password, 
         
       });
+      navigate('/login')
       console.log("Signup Success:", response.data.user.email);
       
     } catch (error) {

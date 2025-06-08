@@ -168,7 +168,7 @@ const Orders = () => {
               >
                 <td className="p-2">{order.userId._id || "N/A"}</td>
                 <td className="p-2">{order.userId.email || "N/A"}</td>
-                <td className="p-2">₹{order.subtotal}</td>
+                <td className="p-2">₹{order.subtotal.toFixed(2)}</td>
                 <td className="p-2">₹{order.totalDiscount.toFixed(2)}</td>
                 <td className="p-2">
                   <select

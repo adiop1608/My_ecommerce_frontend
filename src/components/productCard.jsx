@@ -42,7 +42,7 @@ const addToCart = async (product) => {
         discount:product.discount 
       },{
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${token}`,
         }
       }
     )
@@ -79,7 +79,7 @@ const addToCart = async (product) => {
           </div>
           <div className="flex">
           <span className="text-green-500 text-sm text-nowrap">
-            <a>Discount :</a> ({product.discount}%)
+            <span>Discount :</span> ({product.discount}%)
           </span>
           </div>
         </div>

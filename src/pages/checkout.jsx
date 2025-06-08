@@ -3,7 +3,8 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-
+import { jwtDecode } from "jwt-decode";
+const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
 function Checkout() {
   const [AddressIndex, setAddressIndex] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -34,6 +35,7 @@ function Checkout() {
 
   useEffect(() => {
     if (buyNowProduct) {
+      console.log(buyNowProduct);
       const discounted = (
         buyNowProduct.price -
         (buyNowProduct.price * buyNowProduct.discount) / 100
@@ -118,6 +120,7 @@ function Checkout() {
       alert("Please select an address");
       return;
     }
+
     if (!paymentMethod) {
       alert("Please select a payment method");
       return;
@@ -127,31 +130,109 @@ function Checkout() {
 
     const orderData = {
       products: cart.products,
-      address: selectedAddress,
+      selectedAddress,
       paymentMethod,
       subtotal: cart.subtotal,
       totalDiscount: cart.totalDiscount,
+      isFromCart: !buyNowProduct,
     };
 
-    try {
-      const response = await fetch(`${backendUrl}/order`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderData),
-      });
+    if (paymentMethod === "cash") {
+      // COD flow
+      try {
+        const response = await fetch(`${backendUrl}/order`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(orderData),
+        });
 
-      if (response.ok) {
-        alert("Order placed successfully!");
-      } else {
-        const text = await response.text();
-        console.error("Order error:", text);
+        if (response.ok) {
+          alert("Order placed successfully!");
+        } else {
+          const text = await response.text();
+          console.error("Order error:", text);
+          alert("Order placement failed");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Something went wrong");
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+    } else if (paymentMethod === "card") {
+      // Card payment via Razorpay
+      try {
+        const res = await axios.post(
+          `${backendUrl}/payment/create-order`,
+          { amount: cart.subtotal },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const { id: razorpayOrderId, amount, currency } = res.data;
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount,
+          currency,
+          name: "ShopSphere",
+          description: "Order Payment",
+          order_id: razorpayOrderId,
+          handler: async function (response) {
+            const paymentOrderData = {
+              ...orderData,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              
+            };
+
+            try {
+              const finalRes = await fetch(`${backendUrl}/order`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(paymentOrderData),
+              });
+
+              if (finalRes.ok) {
+                alert("Payment successful & order placed!");
+              } else {
+                const errorText = await finalRes.text();
+                console.error("Order error after payment:", errorText);
+                alert("Order failed after payment");
+              }
+            } catch (err) {
+              console.error("Order save error:", err);
+              alert("Failed to place order after payment");
+            }
+          },
+          prefill: {
+            name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
+            email: userEmail, // update if you have user email
+            contact: selectedAddress.phoneNumber || "9999999999",
+          },
+          theme: {
+            color: "#4F46E5",
+          },
+        };
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+
+        razorpay.on("payment.failed", function (response) {
+          alert("Payment Failed: " + response.error.description);
+          console.error("Payment error", response.error);
+        });
+      } catch (err) {
+        console.error("Razorpay init error", err);
+        alert("Failed to initiate payment");
+      }
     }
   };
 
@@ -217,7 +298,7 @@ function Checkout() {
                         type="text"
                         name="firstName"
                         id="firstName"
-                        autocomplete="given-name"
+                        autoComplete="given-name"
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                       ></input>
                     </div>
@@ -338,7 +419,7 @@ function Checkout() {
                         type="text"
                         name="state"
                         id="state"
-                        autocomplete="address-level1"
+                        autoComplete="address-level1"
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                       ></input>
                     </div>
@@ -356,7 +437,7 @@ function Checkout() {
                         type="text"
                         name="pinCode"
                         id="pinCode"
-                        autocomplete="postal-code"
+                        autoComplete="postal-code"
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                       ></input>
                     </div>
