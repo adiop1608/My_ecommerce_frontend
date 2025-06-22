@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import debounce from "lodash/debounce";
+import shopsphereLogo from '../assets/logo.png'
 function Navbar({onSearch}) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSearchFocus, setIsSearchFocus] = useState(false);
@@ -72,8 +73,8 @@ function Navbar({onSearch}) {
         <div className="flex flex-row items-center cursor-pointer">
           <img
             className=" size-[50px] rounded-full flex "
-            src="../src/assets/logo.png "
-            alt=""
+            src={shopsphereLogo}
+            alt="logo"
           />
           <p className="ml-4 hover:text-blue-500 hover:underline hover:underline-offset-8 cursor-pointer ">
             ShopSphere

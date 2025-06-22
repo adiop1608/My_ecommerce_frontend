@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import shopsphereLogo from '../assets/logo.png'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -68,8 +69,8 @@ function SignUp() {
       <div className="bg-white px-20 py-20 w-[500px]">
         <div id="logo" className="mb-4 px-25">
           <img
-            src="../src/assets/logo.png"
-            alt=""
+            src={shopsphereLogo}
+            alt="logo"
             className="size-10 inline-block "
           />
           <span className="ml-2 ">Shopsphere</span>

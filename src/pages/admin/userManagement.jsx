@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from '../../components/navbar';
 import axios from "axios";
-
+import shopsphereLogo from '../../assets/logo.png'
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -78,7 +78,7 @@ const UserManagement = () => {
   return (
     <div className="p-4 lato-regular ">
       <div className="flex items-center gap-2 poppins-semibold top-4 right-4 justify-end mr-4">
-        <img src="src/assets/logo.png" alt="" className="size-13 rounded-2xl" />
+        <img src={shopsphereLogo} alt="logo" className="size-13 rounded-2xl" />
         <h3 className="text-lg font-medium">Shopshere</h3>
       </div>
 

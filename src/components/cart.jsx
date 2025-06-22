@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import shopsphereLogo from '../assets/logo.png'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export default function Cart() {
   const [cart, setCart] = useState(null)
@@ -83,7 +84,7 @@ export default function Cart() {
   return (
     <div className='merriweather-regular'>
       <div className="flex justify-end px-8 mt-4">
-        <img src="../src/assets/logo.png" alt="" className="size-10 rounded-2xl" />
+        <img src={shopsphereLogo} alt="logo" className="size-10 rounded-2xl" />
         <span className="ml-2 flex items-center font-serif text-xl">Shopsphere</span>
       </div>
 

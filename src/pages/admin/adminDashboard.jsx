@@ -10,6 +10,7 @@ import {
 import OverviewCard from "../../components/overviewcards";
 import SalesGraph from "./salesGraph";
 import { Link } from "react-router-dom";
+import shopsphereLogo from '../../assets/logo.png'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const AdminDashboard = () => {
   const [counts, setCounts] = useState({
@@ -68,8 +69,8 @@ const AdminDashboard = () => {
         <div className="flex flex-row items-center cursor-pointer">
           <img
             className=" size-[50px] rounded-full flex "
-            src="../src/assets/logo.png "
-            alt=""
+            src={shopsphereLogo}
+            alt="logo"
           />
           <p className="ml-4 hover:text-blue-500 hover:underline hover:underline-offset-8 cursor-pointer ">
             ShopSphere

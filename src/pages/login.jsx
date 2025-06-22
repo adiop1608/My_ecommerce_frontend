@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
+import shopsphereLogo from '../assets/logo.png'
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 function Login() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ function Login() {
       <div className="bg-white px-20 py-20 w-[500px]">
         <div id="logo" className="mb-4 px-25">
           <img
-            src="../src/assets/logo.png"
+            src={shopsphereLogo}
             alt=""
             className="size-10 inline-block "
           />
