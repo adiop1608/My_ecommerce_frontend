@@ -215,7 +215,7 @@ function Checkout() {
           },
           prefill: {
             name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
-            email: userEmail, // update if you have user email
+            email: "guest@email.com", // update if you have user email
             contact: selectedAddress.phoneNumber || "9999999999",
           },
           theme: {
